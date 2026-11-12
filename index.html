@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Shri Sai Satcharitra - The Life and Teachings of Shirdi Sai Baba. An elegant, devotional, paginated e-reader for physical book reading experience on GitHub Pages.">
+  <meta name="theme-color" content="#c26100">
+  <title>Shri Sai Satcharitra — E-Reader</title>
+
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="icon" type="image/png" sizes="256x256" href="assets/images/favicon.png">
+  <link rel="shortcut icon" href="assets/images/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/images/favicon.png">
+
+  <!-- Google Fonts: Merriweather & Inter & Crimson Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/reader.css">
+</head>
+<body>
+
+  <div id="app-container">
+
+    <!-- ====================================================================
+         TOP HEADER BAR
+         ==================================================================== -->
+    <header id="top-header">
+      <div class="header-left">
+        <!-- Table of Contents Toggle -->
+        <button id="btn-toggle-toc" class="text-btn" title="Table of Contents (Hotkey: T)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          <span>Chapters</span>
+        </button>
+
+        <!-- Brand / Book Title & Sai Baba Photo Trigger -->
+        <div class="book-brand" id="brand-book-title" title="Click for Shri Sai Baba Darshan & Photo">
+          <img src="assets/images/sai_avatar.jpg" alt="Shri Sai Baba" class="brand-avatar">
+          <span class="brand-text">Sai Satcharitra</span>
+          <span class="brand-badge">Darshan</span>
+        </div>
+      </div>
+
+      <!-- Center: Current Chapter Indicator & Quick Jump -->
+      <div class="header-center">
+        <button id="btn-chapter-indicator" class="chapter-indicator-btn" title="Click to view all chapters">
+          <span id="chapter-indicator-label" class="chapter-label">Chapter I</span>
+          <span id="chapter-indicator-title" class="chapter-title-text">: Salutations & Story of Grinding</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="header-right">
+        <!-- View Mode (Book vs Scroll) -->
+        <button id="btn-toggle-view-mode" class="text-btn desktop-only" title="Toggle Book View vs Continuous Scroll">
+          <span>📖 Book</span>
+        </button>
+
+        <!-- Add Bookmark / Save Point -->
+        <button id="btn-quick-bookmark" class="text-btn desktop-only" title="Set Save Point / Bookmark">
+          <span>🔖 Bookmark</span>
+        </button>
+
+        <!-- Bookmarks List Drawer -->
+        <button id="btn-bookmarks-list" class="icon-btn desktop-only" title="Saved Bookmarks (Hotkey: B)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          <span id="bookmarks-badge-counter" class="badge-counter" style="display: none;">0</span>
+        </button>
+
+        <!-- Search Book -->
+        <button id="btn-search-modal" class="icon-btn desktop-only" title="Search Book (Hotkey: /)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+
+        <!-- Audio Narration -->
+        <button id="btn-audio-narration" class="icon-btn desktop-only" title="Listen Aloud (Text to Speech)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        </button>
+
+        <!-- Appearance & Reading Settings -->
+        <button id="btn-settings-modal" class="icon-btn desktop-only" title="Reader Preferences">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+
+        <!-- Fullscreen -->
+        <button id="btn-fullscreen" class="icon-btn desktop-only" title="Toggle Fullscreen">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+        </button>
+
+        <!-- Mobile Menu Trigger Button (Replaces top icons on small screens) -->
+        <button id="btn-mobile-menu" class="icon-btn mobile-only" title="Reader Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         MAIN READER CANVAS
+         ==================================================================== -->
+    <main id="reader-workspace">
+
+      <!-- Interactive Target Selection Banner -->
+      <div id="target-mode-banner">
+        <span>📍 Click any paragraph in the text to attach your bookmark!</span>
+        <button id="btn-cancel-target-mode">Cancel</button>
+      </div>
+
+      <!-- --- BOOK MODE (PHYSICAL PAGINATED BOOK) --- -->
+      <div id="book-stage" class="book-stage">
+        <!-- Navigation Arrow Zones on margins -->
+        <div id="nav-left-zone" class="book-nav-zone left" title="Previous Page (Arrow Left)">
+          <div class="nav-arrow-circle">‹</div>
+        </div>
+        <div id="nav-right-zone" class="book-nav-zone right" title="Next Page (Arrow Right / Space)">
+          <div class="nav-arrow-circle">›</div>
+        </div>
+
+        <div id="book-container" class="book-container">
+          <!-- Spine Gutter Crease (simulates 3D center binding) -->
+          <div class="book-spine"></div>
+
+          <!-- Two-Page Spread -->
+          <div class="book-spread">
+            <!-- Left Page -->
+            <div id="page-left" class="book-page page-left">
+              <div id="page-left-header" class="page-running-header">
+                <span>Shri Sai Satcharitra</span>
+                <span>Chapter I</span>
+              </div>
+              <div id="page-left-content" class="page-body-content"></div>
+              <div id="page-left-footer" class="page-running-footer">Page 1</div>
+            </div>
+
+            <!-- Right Page -->
+            <div id="page-right" class="book-page page-right">
+              <div id="page-right-header" class="page-running-header">
+                <span>Chapter Title</span>
+                <span>❖</span>
+              </div>
+              <div id="page-right-content" class="page-body-content"></div>
+              <div id="page-right-footer" class="page-running-footer">Page 2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- --- CONTINUOUS SCROLL MODE --- -->
+      <div id="scroll-view-stage" class="scroll-view-stage">
+        <div id="scroll-content-body" class="scroll-content-body"></div>
+      </div>
+
+    </main>
+
+    <!-- ====================================================================
+         BOTTOM PROGRESS BAR & CONTROLS
+         ==================================================================== -->
+    <footer id="bottom-bar">
+      <!-- Left: Chapter Details -->
+      <div class="bottom-left">
+        <button id="btn-prev-chapter" class="page-btn" title="Previous Chapter">⏮</button>
+        <span id="progress-chapter-info">Chapter I • Page 1 of 8 (12%)</span>
+      </div>
+
+      <!-- Center: Interactive Scrub Bar -->
+      <div class="bottom-center">
+        <div id="progress-scrub-container" class="progress-scrub-container">
+          <div id="progress-track" class="progress-track">
+            <div id="progress-fill" class="progress-fill"></div>
+            <div id="progress-handle" class="progress-handle"></div>
+          </div>
+          <div id="progress-tooltip" class="progress-tooltip">Jump to Page</div>
+        </div>
+        <div class="progress-text-info">
+          <span>Reading Chapter</span>
+          <span id="progress-remaining-time">~6 min left</span>
+        </div>
+      </div>
+
+      <!-- Right: Page Turn & Global Stats -->
+      <div class="bottom-right">
+        <div class="page-nav-controls">
+          <button id="btn-prev-page" class="page-btn" title="Previous Page">‹</button>
+          <button id="btn-next-page" class="page-btn" title="Next Page">›</button>
+          <button id="btn-next-chapter" class="page-btn" title="Next Chapter">⏭</button>
+        </div>
+        <div id="book-progress-pill" class="book-progress-pill" title="Total book reading completion">
+          <span>🕉️</span> <span>Book: 0%</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ====================================================================
+         DRAWERS (TOC & BOOKMARKS)
+         ==================================================================== -->
+    <div id="drawer-backdrop" class="drawer-backdrop"></div>
+
+    <!-- Table of Contents Drawer -->
+    <aside id="toc-drawer" class="app-drawer left">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <div class="drawer-title">Table of Contents</div>
+        </div>
+        <button class="drawer-close-btn" title="Close Drawer">✕</button>
+      </div>
+
+      <!-- Search Chapters Input -->
+      <div class="drawer-search-wrap">
+        <span class="search-input-icon">🔍</span>
+        <input type="text" id="toc-search-input" class="drawer-search-input" placeholder="Search chapters, topics, miracles...">
+      </div>
+
+      <!-- Chapter Lists (Sai Baba Photo item first, then all chapters) -->
+      <div id="toc-list-container" class="drawer-scroll-body"></div>
+    </aside>
+
+    <!-- Bookmarks Drawer -->
+    <aside id="bookmarks-drawer" class="app-drawer right">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <span style="font-size: 1.3rem;">🔖</span>
+          <div class="drawer-title">Bookmarks & Save Points</div>
+        </div>
+        <button class="drawer-close-btn" title="Close Drawer">✕</button>
+      </div>
+      <div id="bookmarks-list-container" class="drawer-scroll-body"></div>
+    </aside>
+
+    <!-- ====================================================================
+         MODALS
+         ==================================================================== -->
+
+    <!-- Bookmark / Save Point Modal -->
+    <div id="bookmark-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title">Set Bookmark / Save Point</div>
+          <button class="drawer-close-btn modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title">Reading Preferences</div>
+          <button class="drawer-close-btn modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- Theme Swatches -->
+          <div class="setting-row">
+            <label class="setting-label">Color Theme</label>
+            <div class="theme-swatches">
+              <div class="theme-swatch active" data-theme="light">
+                <div class="swatch-circle" style="background: #fffdf9;"></div>
+                <span class="swatch-name">Ivory</span>
+              </div>
+              <div class="theme-swatch" data-theme="sepia">
+                <div class="swatch-circle" style="background: #f7efe0;"></div>
+                <span class="swatch-name">Sepia</span>
+              </div>
+              <div class="theme-swatch" data-theme="dark">
+                <div class="swatch-circle" style="background: #1c1e24;"></div>
+                <span class="swatch-name">Night</span>
+              </div>
+              <div class="theme-swatch" data-theme="forest">
+                <div class="swatch-circle" style="background: #192721;"></div>
+                <span class="swatch-name">Sage</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Font Family -->
+          <div class="setting-row">
+            <label class="setting-label" for="setting-font-family">Font Family</label>
+            <select id="setting-font-family">
+              <option value="serif">Classic Serif (Merriweather / Georgia)</option>
+              <option value="literary">Devotional Literary (Crimson Pro)</option>
+              <option value="sans">Modern Sans (Inter / Clean)</option>
+              <option value="dyslexic">OpenDyslexic (Accessible)</option>
+            </select>
+          </div>
+
+          <!-- Font Size Slider -->
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Font Size</span>
+              <span id="val-font-size" class="setting-value">17.5px</span>
+            </div>
+            <input type="range" id="setting-font-size" class="setting-slider" min="14" max="26" step="0.5" value="17.5">
+          </div>
+
+          <!-- Line Height Slider -->
+          <div class="setting-row">
+            <div class="setting-label">
+              <span>Line Spacing</span>
+              <span id="val-line-height" class="setting-value">1.75</span>
+            </div>
+            <input type="range" id="setting-line-height" class="setting-slider" min="1.4" max="2.3" step="0.05" value="1.75">
+          </div>
+
+          <!-- Double Page Spread Toggle -->
+          <div class="toggle-switch-row">
+            <div>
+              <div style="font-weight: 600; font-size: 0.9rem;">Two-Page Book Spread (Desktop)</div>
+              <div style="font-size: 0.78rem; color: var(--text-light);">Displays facing pages like a physical book</div>
+            </div>
+            <div id="toggle-double-page" class="toggle-switch active">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+
+          <!-- Paper Turn Sound Toggle -->
+          <div class="toggle-switch-row">
+            <div>
+              <div style="font-weight: 600; font-size: 0.9rem;">Paper Flip Sound Effect</div>
+              <div style="font-size: 0.78rem; color: var(--text-light);">Synthesized soft page rustle on turning</div>
+            </div>
+            <div id="toggle-sound" class="toggle-switch active">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+
+          <!-- Drop Caps Toggle -->
+          <div class="toggle-switch-row">
+            <div>
+              <div style="font-weight: 600; font-size: 0.9rem;">Chapter Drop Caps</div>
+              <div style="font-size: 0.78rem; color: var(--text-light);">Traditional illuminated first letter</div>
+            </div>
+            <div id="toggle-drop-caps" class="toggle-switch active">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="primary-btn modal-close-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal-overlay">
+      <div class="modal-box" style="max-width: 620px;">
+        <div class="modal-header">
+          <div class="modal-title">Search Shri Sai Satcharitra</div>
+          <button class="drawer-close-btn modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-row">
+            <input type="text" id="search-query-input" placeholder="Type words like 'Udi', 'Brahma-Jnana', 'Cholera', 'Dakshina'..." autofocus>
+          </div>
+          <div id="search-results-container" class="search-results-list">
+            <div style="text-align: center; padding: 20px; color: var(--text-light); font-size: 0.88rem;">
+              Search across all 101,000+ words in the holy book...
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="text-btn modal-close-btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Audio Player Bar (When TTS is Active) -->
+    <div id="audio-player-bar">
+      <span>🎧 Listening</span>
+      <button id="btn-audio-play-pause" class="text-btn" style="padding: 2px 8px;">⏸ Pause</button>
+      <select id="audio-speed-select" style="padding: 2px 6px; font-size: 0.78rem;">
+        <option value="0.8">0.8x</option>
+        <option value="1.0" selected>1.0x</option>
+        <option value="1.2">1.2x</option>
+      </select>
+      <button id="btn-audio-stop" class="text-btn" style="padding: 2px 8px;">⏹ Stop</button>
+    </div>
+
+    <!-- Resume Reading Toast -->
+    <div id="resume-toast">
+      <div class="resume-toast-header">
+        <span>📖 RESUME READING</span>
+        <button id="btn-toast-dismiss" class="drawer-close-btn" style="width:20px;height:20px;font-size:0.8rem;">✕</button>
+      </div>
+      <div id="resume-toast-text" class="resume-toast-text">
+        Welcome back! You were reading Chapter I, Page 1.
+      </div>
+      <div class="resume-toast-actions">
+        <button id="btn-toast-resume" class="primary-btn" style="padding: 5px 12px; font-size: 0.82rem;">Resume Reading</button>
+      </div>
+    </div>
+
+    <!-- Sai Baba Sacred Darshan Modal -->
+    <div id="darshan-modal" class="modal-overlay">
+      <div class="modal-box darshan-modal-box">
+        <div class="modal-header">
+          <div class="modal-title">Shri Sadguru Sainath Maharaj</div>
+          <button class="drawer-close-btn modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body darshan-modal-body">
+          <div class="darshan-image-frame">
+            <img src="assets/images/sai_baba.jpg" alt="Shri Sadguru Sainath Maharaj of Shirdi" id="darshan-modal-image">
+          </div>
+          <div class="darshan-mantra">॥ ॐ श्री साईंनाथाय नमः ॥</div>
+          <div class="darshan-quote">"Why fear when I am here? Surrender all your cares unto Me and I shall see to them."</div>
+          <div class="darshan-blessing">Bow to Shri Sai — Peace be to all</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Action Menu Sheet (Drawer) -->
+    <div id="mobile-menu-overlay" class="drawer-backdrop"></div>
+    <div id="mobile-menu-sheet" class="mobile-menu-sheet">
+      <div class="mobile-menu-drag-handle"></div>
+      <div class="mobile-menu-header">
+        <div class="mobile-menu-brand">
+          <img src="assets/images/sai_avatar.jpg" alt="Shri Sai Baba" class="mobile-menu-avatar">
+          <div>
+            <div class="mobile-menu-title">Sai Satcharitra</div>
+            <div class="mobile-menu-sub">Options & Quick Actions</div>
+          </div>
+        </div>
+        <button id="btn-close-mobile-menu" class="drawer-close-btn" title="Close Menu">✕</button>
+      </div>
+      <div class="mobile-menu-grid">
+        <button id="mob-btn-toggle-view" class="mobile-menu-card">
+          <span class="mob-card-icon" id="mob-view-icon">📖</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title" id="mob-view-text">Book View</span>
+            <span class="mob-card-hint">Switch reading mode</span>
+          </div>
+        </button>
+
+        <button id="mob-btn-quick-bookmark" class="mobile-menu-card">
+          <span class="mob-card-icon">🔖</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title">Set Bookmark</span>
+            <span class="mob-card-hint">Pin save point</span>
+          </div>
+        </button>
+
+        <button id="mob-btn-bookmarks-list" class="mobile-menu-card">
+          <span class="mob-card-icon">📑</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title">Bookmarks</span>
+            <span class="mob-card-hint">Saved locations</span>
+          </div>
+        </button>
+
+        <button id="mob-btn-search" class="mobile-menu-card">
+          <span class="mob-card-icon">🔍</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title">Search</span>
+            <span class="mob-card-hint">Search holy book</span>
+          </div>
+        </button>
+
+        <button id="mob-btn-audio" class="mobile-menu-card">
+          <span class="mob-card-icon">🎧</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title">Listen Aloud</span>
+            <span class="mob-card-hint">Audio narration</span>
+          </div>
+        </button>
+
+        <button id="mob-btn-settings" class="mobile-menu-card">
+          <span class="mob-card-icon">⚙️</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title">Preferences</span>
+            <span class="mob-card-hint">Theme & typography</span>
+          </div>
+        </button>
+
+        <button id="mob-btn-darshan" class="mobile-menu-card darshan-highlight-card">
+          <span class="mob-card-icon">🙏</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title">Baba Darshan</span>
+            <span class="mob-card-hint">Sacred photo & quote</span>
+          </div>
+        </button>
+
+        <button id="mob-btn-fullscreen" class="mobile-menu-card">
+          <span class="mob-card-icon">⛶</span>
+          <div class="mob-card-info">
+            <span class="mob-card-title">Fullscreen</span>
+            <span class="mob-card-hint">Distraction-free</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hidden Ruler for Dynamic DOM Pagination Measurement -->
+    <div id="pagination-ruler" class="page-body-content"></div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/book-data.js"></script>
+  <script src="js/reader.js"></script>
+  <script>
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+
+</body>
+</html>
